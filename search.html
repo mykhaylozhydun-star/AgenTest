@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusGo — Результати пошуку рейсів</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .search-page-container { padding: 40px 0; }
+        .search-summary {
+            background: #ffffff;
+            padding: 20px 24px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .search-summary h2 { font-size: 20px; font-weight: 700; }
+        .results-list { display: flex; flex-direction: column; gap: 16px; }
+        .ticket-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            align-items: center;
+            gap: 20px;
+            transition: box-shadow 0.2s;
+        }
+        .ticket-card:hover { box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08); }
+        .time-block { font-size: 22px; font-weight: 800; color: #0f172a; }
+        .city-block { font-size: 14px; color: #64748b; margin-top: 4px; }
+        .duration-badge {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .ticket-price { font-size: 24px; font-weight: 800; color: #10b981; }
+        .no-results {
+            background: #ffffff;
+            padding: 40px;
+            text-align: center;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container navbar-container">
+            <a href="index.html" class="logo">Bus<span>Go</span></a>
+            <nav class="nav-links">
+                <a href="index.html">Головна</a>
+                <a href="search.html" class="active">Пошук рейсів</a>
+                <a href="faq.html">FAQ</a>
+                <a href="contacts.html">Контакти</a>
+                <a href="admin.html" style="color: #10b981; font-weight: 700;">Адмінка ⚙️</a>
+            </nav>
+            <button class="btn-secondary">Увійти</button>
+        </div>
+    </header>
+
+    <div class="container search-page-container">
+        
+        <!-- Верхня панель з інформацією про пошук -->
+        <div class="search-summary">
+            <div>
+                <h2 id="search-title">Пошук рейсів...</h2>
+                <p id="search-subtitle" style="color: #64748b; font-size: 14px; margin-top: 4px;"></p>
+            </div>
+            <a href="index.html" class="btn-secondary">Змінити пошук</a>
+        </div>
+
+        <!-- Список знайдених рейсів -->
+        <div class="results-list" id="results-list">
+            <!-- Сюди завантажуються квитки з JS -->
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const from = urlParams.get('from') || '';
+            const to = urlParams.get('to') || '';
+            const date = urlParams.get('date') || '';
+
+            const titleEl = document.getElementById('search-title');
+            const subtitleEl = document.getElementById('search-subtitle');
+            
+            if (from && to) {
+                titleEl.textContent = `${from} ➔ ${to}`;
+                subtitleEl.textContent = date ? `Дата виїзду: ${date}` : 'Усі доступні дати';
+            } else {
+                titleEl.textContent = 'Усі доступні рейси Україна ⇄ Іспанія';
+            }
+
+            // Завантаження збережених рейсів
+            const defaultRoutes = [
+                { id: 1, from: 'Київ', to: 'Барселона', time: '07:00', duration: 36, price: 5200, days: 'Вт, Пт', dir: 'UA_ES' },
+                { id: 2, from: 'Львів', to: 'Барселона', time: '13:00', duration: 30, price: 4600, days: 'Вт, Пт', dir: 'UA_ES' },
+                { id: 3, from: 'Львів', to: 'Мадрид', time: '13:00', duration: 38, price: 5000, days: 'Ср, Сб', dir: 'UA_ES' },
+                { id: 4, from: 'Барселона', to: 'Львів', time: '10:00', duration: 30, price: 4600, days: 'Чт, Нд', dir: 'ES_UA' }
+            ];
+
+            const saved = localStorage.getItem('bus_routes_es');
+            const routes = saved ? JSON.parse(saved) : defaultRoutes;
+
+            // Фільтрація
+            const filtered = routes.filter(r => {
+                const matchFrom = !from || r.from.toLowerCase().includes(from.toLowerCase());
+                const matchTo = !to || r.to.toLowerCase().includes(to.toLowerCase());
+                return matchFrom && matchTo;
+            });
+
+            const resultsContainer = document.getElementById('results-list');
+            resultsContainer.innerHTML = '';
+
+            if (filtered.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <h3>За вашим запитом рейсів не знайдено 😔</h3>
+                        <p style="color: #64748b; margin-top: 8px;">Спробуйте вибрати інші міста або перевірте наявність рейсів в адмін-панелі.</p>
+                        <a href="admin.html" class="btn-primary" style="display: inline-block; margin-top: 16px; text-decoration: none;">Додати цей рейс в Адмінці</a>
+                    </div>
+                `;
+            } else {
+                filtered.forEach(route => {
+                    const card = document.createElement('div');
+                    card.className = 'ticket-card';
+                    card.innerHTML = `
+                        <div>
+                            <div class="time-block">${route.time}</div>
+                            <div class="city-block"><strong>${route.from}</strong> ➔ <strong>${route.to}</strong></div>
+                            <small style="color: #94a3b8;">Дні виїзду: ${route.days}</small>
+                        </div>
+                        <div>
+                            <span class="duration-badge">⏱ ${route.duration} год в дорозі</span>
+                        </div>
+                        <div>
+                            <div class="ticket-price">${route.price} грн</div>
+                            <small style="color: #64748b;">прямий рейс</small>
+                        </div>
+                        <div style="text-align: right;">
+                            <button class="btn-primary" onclick="alert('Перехід до вибору місця на сторінці booking.html')">Обрати рейс →</button>
+                        </div>
+                    `;
+                    resultsContainer.appendChild(card);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
