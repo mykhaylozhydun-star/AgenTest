@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Встановлюємо мінімальну дату — сьогодні
     const today = new Date().toISOString().split('T')[0];
     const departInput = document.getElementById('depart-date');
     if (departInput) {
@@ -6,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         departInput.min = today;
     }
 
+    // Логіка кнопки поміняти місцями (Звідки <-> Куди)
     const swapBtn = document.getElementById('swap-btn');
     const fromInput = document.getElementById('from-input');
     const toInput = document.getElementById('to-input');
@@ -18,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Дефолтні рейси
     const defaultRoutes = [
         { id: 1, from: 'Київ', to: 'Барселона', time: '07:00', duration: 36, price: 5200, days: 'Вт, Пт', dir: 'UA_ES' },
         { id: 2, from: 'Львів', to: 'Барселона', time: '13:00', duration: 30, price: 4600, days: 'Вт, Пт', dir: 'UA_ES' },
@@ -30,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return saved ? JSON.parse(saved) : defaultRoutes;
     }
 
+    // Показуємо картки рейсів на головній
     const routesGrid = document.getElementById('routes-grid');
     if (routesGrid) {
         const routes = getRoutes();
@@ -58,13 +62,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Обробка форми пошуку при натисканні «Знайти»
     const searchForm = document.getElementById('search-form');
     if (searchForm) {
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const from = fromInput.value;
-            const to = toInput.value;
-            const date = departInput.value;
+            const from = fromInput ? fromInput.value : '';
+            const to = toInput ? toInput.value : '';
+            const date = departInput ? departInput.value : '';
+            
+            // Перенаправлення на сторінку пошуку із параметрами
             window.location.href = `search.html?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${encodeURIComponent(date)}`;
         });
     }
