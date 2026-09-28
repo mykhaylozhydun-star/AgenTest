@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BusGo — Управління рейсами Україна ⇄ Іспанія</title>
+    <title>BusGo — Панель управління</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
         .admin-container { padding: 40px 0; }
-        .admin-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 32px; }
+        .admin-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 32px; margin-bottom: 40px; }
         .admin-card { background: #fff; padding: 24px; border-radius: 16px; border: 1px solid #e2e8f0; }
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
@@ -25,17 +25,17 @@
 
     <header class="navbar">
         <div class="container navbar-container">
-            <a href="index.html" class="logo">Bus<span>Go</span> <small style="font-size: 12px; color: #64748b;">(Україна ⇄ Іспанія Admin)</small></a>
+            <a href="index.html" class="logo">Bus<span>Go</span> <small style="font-size: 12px; color: #64748b;">(Admin Dashboard)</small></a>
             <a href="index.html" class="btn-secondary">← На сайт</a>
         </div>
     </header>
 
     <div class="container admin-container">
-        <h1 style="margin-bottom: 8px;">Керування цінами та рейсами</h1>
-        <p style="color: #64748b; margin-bottom: 24px;">Встановлюйте індивідуальні ціни між містами України та Іспанії</p>
+        <h1 style="margin-bottom: 8px;">Керування цінами та замовленнями</h1>
+        <p style="color: #64748b; margin-bottom: 24px;">Встановлюйте ціни на рейс та переглядайте отримані замовлення</p>
         
         <div class="admin-grid">
-            <!-- Форма додавання ціни між містами -->
+            <!-- Форма -->
             <div class="admin-card">
                 <h3>Додати / Оновити ціну рейсів</h3>
                 <form id="add-route-form" style="margin-top: 16px;">
@@ -58,30 +58,30 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Час виїзду (місцевий)</label>
+                        <label>Час виїзду</label>
                         <input type="time" id="admin-time" value="09:00" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Тривалість поїздки (годин)</label>
-                        <input type="number" id="admin-duration" placeholder="32" value="34" required>
+                        <label>Тривалість (годин)</label>
+                        <input type="number" id="admin-duration" value="34" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Ціна квитка (грн або €)</label>
+                        <label>Ціна квитка (грн)</label>
                         <input type="number" id="admin-price" placeholder="4800" required>
                     </div>
 
                     <div class="form-group">
                         <label>Дні відправлення</label>
-                        <input type="text" id="admin-days" placeholder="Вівторок, П'ятниця" value="Вт, Пт, Нд">
+                        <input type="text" id="admin-days" value="Вт, Пт, Нд">
                     </div>
 
-                    <button type="submit" class="btn-primary" style="width: 100%;">Зберегти рейс та ціну</button>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Зберегти рейс</button>
                 </form>
             </div>
 
-            <!-- Таблиця наявних цінових зв'язків -->
+            <!-- Таблиця рейсів -->
             <div class="admin-card">
                 <h3>Активні маршрути та ціни</h3>
                 <table class="route-table">
@@ -97,6 +97,26 @@
                 </table>
             </div>
         </div>
+
+        <!-- Таблиця отриманих замовлень -->
+        <div class="admin-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>📥 Отримані Бронювання (Замовлення)</h3>
+                <button onclick="clearBookings()" class="btn-secondary" style="font-size: 12px; padding: 6px 12px;">Очистити список</button>
+            </div>
+            <table class="route-table">
+                <thead>
+                    <tr>
+                        <th>Пасажир</th>
+                        <th>Маршрут / Дата</th>
+                        <th>Контактувати</th>
+                        <th>Місця</th>
+                        <th>Сума</th>
+                    </tr>
+                </thead>
+                <tbody id="bookings-list"></tbody>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -107,8 +127,7 @@
             { id: 1, from: 'Київ', to: 'Барселона', time: '07:00', duration: 36, price: 5200, days: 'Вт, Пт', dir: 'UA_ES' },
             { id: 2, from: 'Львів', to: 'Барселона', time: '13:00', duration: 30, price: 4600, days: 'Вт, Пт', dir: 'UA_ES' },
             { id: 3, from: 'Львів', to: 'Мадрид', time: '13:00', duration: 38, price: 5000, days: 'Ср, Сб', dir: 'UA_ES' },
-            { id: 4, from: 'Барселона', to: 'Львів', time: '10:00', duration: 30, price: 4600, days: 'Чт, Нд', dir: 'ES_UA' },
-            { id: 5, from: 'Барселона', to: 'Київ', time: '10:00', duration: 36, price: 5200, days: 'Чт, Нд', dir: 'ES_UA' }
+            { id: 4, from: 'Барселона', to: 'Львів', time: '10:00', duration: 30, price: 4600, days: 'Чт, Нд', dir: 'ES_UA' }
         ];
 
         function updateCityDropdowns() {
@@ -153,6 +172,30 @@
             });
         }
 
+        function renderBookings() {
+            const saved = localStorage.getItem('bus_user_bookings');
+            const bookings = saved ? JSON.parse(saved) : [];
+            const tbody = document.getElementById('bookings-list');
+            tbody.innerHTML = '';
+
+            if (bookings.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">Поки немає замовлень</td></tr>`;
+                return;
+            }
+
+            bookings.reverse().forEach(b => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${b.fname} ${b.lname}</strong></td>
+                    <td>${b.from} ➔ ${b.to}<br><small style="color:#64748b;">Дата: ${b.date}</small></td>
+                    <td>${b.phone}<br><small style="color:#64748b;">${b.email}</small></td>
+                    <td><span class="badge-country badge-ua">№ ${b.seats.join(', ')}</span></td>
+                    <td><strong style="color:#10b981;">${b.totalPrice} грн</strong></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
         document.getElementById('add-route-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const routes = getRoutes();
@@ -179,8 +222,16 @@
             renderRoutes();
         }
 
+        function clearBookings() {
+            if (confirm('Видалити всі замовлення зі списку?')) {
+                localStorage.removeItem('bus_user_bookings');
+                renderBookings();
+            }
+        }
+
         updateCityDropdowns();
         renderRoutes();
+        renderBookings();
     </script>
 </body>
 </html>
