@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusGo — Адмін-панель</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-container { padding: 40px 0; }
+        .admin-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 32px; }
+        .admin-card { background: #fff; padding: 24px; border-radius: 16px; border: 1px solid #e2e8f0; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; }
+        .route-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .route-table th, .route-table td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+        .btn-delete { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container navbar-container">
+            <a href="index.html" class="logo">Bus<span>Go</span> <small style="font-size: 12px; color: #64748b;">(Admin)</small></a>
+            <a href="index.html" class="btn-secondary">← На сайт</a>
+        </div>
+    </header>
+
+    <div class="container admin-container">
+        <h1 style="margin-bottom: 24px;">Панель управління рейсами</h1>
+        
+        <div class="admin-grid">
+            <!-- Форма додавання нового рейсу -->
+            <div class="admin-card">
+                <h3>Додати новий рейс</h3>
+                <form id="add-route-form" style="margin-top: 16px;">
+                    <div class="form-group">
+                        <label>Місто виїзду (Звідки)</label>
+                        <input type="text" id="admin-from" placeholder="напр. Київ" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Місто прибуття (Куди)</label>
+                        <input type="text" id="admin-to" placeholder="напр. Варшава" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Час виїзду</label>
+                        <input type="time" id="admin-time" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ціна (грн)</label>
+                        <input type="number" id="admin-price" placeholder="850" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Опис / Зручності</label>
+                        <input type="text" id="admin-desc" placeholder="Wi-Fi, розетки, кондиціонер">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">+ Додати рейс</button>
+                </form>
+            </div>
+
+            <!-- Таблиця наявних рейсів -->
+            <div class="admin-card">
+                <h3>Активні рейси</h3>
+                <table class="route-table">
+                    <thead>
+                        <tr>
+                            <th>Маршрут</th>
+                            <th>Час</th>
+                            <th>Ціна</th>
+                            <th>Дія</th>
+                        </tr>
+                    </thead>
+                    <tbody id="routes-list">
+                        <!-- Сюди скрипт буде додавати нові рейси -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Логіка збереження рейсів у localStorage
+        const defaultRoutes = [
+            { id: 1, from: 'Київ', to: 'Одеса', time: '08:00', price: 450, desc: 'Комфортний рейс • Експрес' },
+            { id: 2, from: 'Київ', to: 'Львів', time: '22:30', price: 550, desc: 'Нічний рейс • Wi-Fi & Розетки' },
+            { id: 3, from: 'Львів', to: 'Краків', time: '06:00', price: 1200, desc: 'Міжнародний • Без пересадок' }
+        ];
+
+        function getRoutes() {
+            const saved = localStorage.getItem('bus_routes');
+            return saved ? JSON.parse(saved) : defaultRoutes;
+        }
+
+        function renderRoutes() {
+            const routes = getRoutes();
+            const tbody = document.getElementById('routes-list');
+            tbody.innerHTML = '';
+
+            routes.forEach(route => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${route.from} — ${route.to}</strong><br><small style="color: #64748b;">${route.desc}</small></td>
+                    <td>${route.time}</td>
+                    <td><strong>${route.price} грн</strong></td>
+                    <td><button class="btn-delete" onclick="deleteRoute(${route.id})">Видалити</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('add-route-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const routes = getRoutes();
+            const newRoute = {
+                id: Date.now(),
+                from: document.getElementById('admin-from').value,
+                to: document.getElementById('admin-to').value,
+                time: document.getElementById('admin-time').value,
+                price: Number(document.getElementById('admin-price').value),
+                desc: document.getElementById('admin-desc').value || 'Стандартний рейс'
+            };
+            routes.push(newRoute);
+            localStorage.setItem('bus_routes', JSON.stringify(routes));
+            renderRoutes();
+            e.target.reset();
+        });
+
+        function deleteRoute(id) {
+            let routes = getRoutes();
+            routes = routes.filter(r => r.id !== id);
+            localStorage.setItem('bus_routes', JSON.stringify(routes));
+            renderRoutes();
+        }
+
+        renderRoutes();
+    </script>
+</body>
+</html>
