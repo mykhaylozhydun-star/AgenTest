@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusGo — Бронювання та Вибір Місця</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .booking-container { padding: 40px 0; }
+        .booking-grid { display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 32px; }
+        .card-box { background: #ffffff; padding: 28px; border-radius: 20px; border: 1px solid #e2e8f0; }
+        
+        /* Анімація Маршруту (Карта) */
+        .route-visualizer {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .route-track {
+            position: relative;
+            height: 4px;
+            background: #334155;
+            margin: 40px 10px;
+            border-radius: 2px;
+        }
+        .route-progress {
+            position: absolute;
+            top: 0; left: 0; height: 100%;
+            background: #10b981;
+            width: 50%;
+            animation: drive 3s infinite alternate ease-in-out;
+        }
+        .bus-icon {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            animation: busMove 3s infinite alternate ease-in-out;
+        }
+        @keyframes busMove {
+            0% { left: 10%; }
+            100% { left: 90%; }
+        }
+
+        .route-points { display: flex; justify-content: space-between; font-weight: 700; }
+
+        /* Схема автобуса */
+        .bus-seats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            max-width: 280px;
+            margin: 20px auto;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px dashed #cbd5e1;
+        }
+        .seat {
+            aspect-ratio: 1;
+            background: #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .seat:hover:not(.occupied) { background: #cbd5e1; }
+        .seat.selected { background: #10b981; color: white; }
+        .seat.occupied { background: #94a3b8; color: #cbd5e1; cursor: not-allowed; }
+
+        .seat-legend { display: flex; gap: 16px; justify-content: center; font-size: 13px; margin-top: 16px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-box { width: 14px; height: 14px; border-radius: 4px; }
+
+        /* Форма пасажира */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .input-box { margin-bottom: 16px; }
+        .input-box label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        .input-box input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 15px; }
+
+        @media (max-width: 900px) {
+            .booking-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container navbar-container">
+            <a href="index.html" class="logo">Bus<span>Go</span></a>
+            <nav class="nav-links">
+                <a href="index.html">Головна</a>
+                <a href="search.html">Пошук рейсів</a>
+                <a href="faq.html">FAQ</a>
+                <a href="contacts.html">Контакти</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container booking-container">
+        <h1 style="margin-bottom: 24px;">Оформлення квитка та вибір місця</h1>
+
+        <div class="booking-grid">
+            
+            <!-- Лівий блок: Карта + Схема Автобуса -->
+            <div>
+                <!-- Анімований маршрут -->
+                <div class="route-visualizer">
+                    <div class="route-points">
+                        <span id="route-from-title">Львів 🇺🇦</span>
+                        <span id="route-to-title">Барселона 🇪🇸</span>
+                    </div>
+                    <div class="route-track">
+                        <div class="bus-icon">🚌</div>
+                    </div>
+                    <p style="text-align: center; font-size: 13px; color: #94a3b8;">Прямий рейс • Комфортабельний автобус</p>
+                </div>
+
+                <!-- Схема автобуса -->
+                <div class="card-box">
+                    <h3 style="text-align: center;">Оберіть місце в автобусі</h3>
+                    
+                    <div class="bus-seats-grid" id="seats-container">
+                        <!-- Місця генеруються скриптом -->
+                    </div>
+
+                    <div class="seat-legend">
+                        <div class="legend-item"><div class="legend-box" style="background:#e2e8f0;"></div> Вільне</div>
+                        <div class="legend-item"><div class="legend-box" style="background:#10b981;"></div> Обране</div>
+                        <div class="legend-item"><div class="legend-box" style="background:#94a3b8;"></div> Зайнято</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правий блок: Форма замовлення -->
+            <div class="card-box">
+                <h3>Дані пасажира</h3>
+                <form id="booking-form" style="margin-top: 20px;">
+                    
+                    <div class="form-row">
+                        <div class="input-box">
+                            <label>Ім'я</label>
+                            <input type="text" id="passenger-firstname" placeholder="Олександр" required>
+                        </div>
+                        <div class="input-box">
+                            <label>Прізвище</label>
+                            <input type="text" id="passenger-lastname" placeholder="Ковальчук" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-box">
+                            <label>Телефон (WhatsApp / Telegram)</label>
+                            <input type="tel" id="passenger-phone" placeholder="+380 67 123 4567" required>
+                        </div>
+                        <div class="input-box">
+                            <label>Email</label>
+                            <input type="email" id="passenger-email" placeholder="example@gmail.com" required>
+                        </div>
+                    </div>
+
+                    <div class="input-box">
+                        <label>Дата виїзду</label>
+                        <input type="date" id="booking-date" required>
+                    </div>
+
+                    <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+                    <!-- Підсумок -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <div>
+                            <span style="color: #64748b; font-size: 14px;">Обрані місця:</span>
+                            <strong id="selected-seats-display" style="display: block; font-size: 18px; color: #0f172a;">Не обрано</strong>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="color: #64748b; font-size: 14px;">До сплати:</span>
+                            <strong id="total-price-display" style="display: block; font-size: 26px; color: #10b981;">0 грн</strong>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; padding: 16px; font-size: 18px;">
+                        Підтвердити бронювання 🚀
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const from = urlParams.get('from') || 'Львів';
+            const to = urlParams.get('to') || 'Барселона';
+            const ticketPrice = Number(urlParams.get('price')) || 4600;
+
+            document.getElementById('route-from-title').textContent = from;
+            document.getElementById('route-to-title').textContent = to;
+
+            const seatsContainer = document.getElementById('seats-container');
+            const seatsDisplay = document.getElementById('selected-seats-display');
+            const priceDisplay = document.getElementById('total-price-display');
+
+            let selectedSeats = [];
+
+            // Генерація 32 місць у салоні
+            for (let i = 1; i <= 32; i++) {
+                const seat = document.createElement('div');
+                seat.className = 'seat';
+                seat.textContent = i;
+
+                // Випадкові вже зайняті місця для реалістичності
+                if ([3, 7, 12, 18, 22].includes(i)) {
+                    seat.classList.add('occupied');
+                } else {
+                    seat.addEventListener('click', () => {
+                        if (selectedSeats.includes(i)) {
+                            selectedSeats = selectedSeats.filter(s => s !== i);
+                            seat.classList.remove('selected');
+                        } else {
+                            selectedSeats.push(i);
+                            seat.classList.add('selected');
+                        }
+                        updateSummary();
+                    });
+                }
+                seatsContainer.appendChild(seat);
+            }
+
+            function updateSummary() {
+                if (selectedSeats.length > 0) {
+                    seatsDisplay.textContent = selectedSeats.join(', ');
+                    priceDisplay.textContent = (selectedSeats.length * ticketPrice) + ' грн';
+                } else {
+                    seatsDisplay.textContent = 'Не обрано';
+                    priceDisplay.textContent = '0 грн';
+                }
+            }
+
+            // Налаштування Telegram Бота для відправки сповіщень
+            const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN'; // Токен вашого бота
+            const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID';     // Ваш ID чату
+
+            document.getElementById('booking-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                if (selectedSeats.length === 0) {
+                    alert('Будь ласка, оберіть хоча б одне місце в автобусі!');
+                    return;
+                }
+
+                const fname = document.getElementById('passenger-firstname').value;
+                const lname = document.getElementById('passenger-lastname').value;
+                const phone = document.getElementById('passenger-phone').value;
+                const email = document.getElementById('passenger-email').value;
+                const date = document.getElementById('booking-date').value;
+                const totalPrice = selectedSeats.length * ticketPrice;
+
+                // Текст повідомлення для вас у Telegram
+                const message = `
+🚌 **НОВЕ БРОНЮВАННЯ КВИТКА!**
+
+📍 **Маршрут:** ${from} ➔ ${to}
+📅 **Дата:** ${date}
+👤 **Пасажир:** ${fname} ${lname}
+📞 **Телефон:** ${phone}
+✉️ **Email:** ${email}
+💺 **Місця:** ${selectedSeats.join(', ')}
+💰 **Сума:** ${totalPrice} грн
+                `;
+
+                // Якщо вказані реальні токени — відправляємо в Telegram
+                if (TELEGRAM_BOT_TOKEN !== 'YOUR_BOT_TOKEN') {
+                    fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: TELEGRAM_CHAT_ID,
+                            text: message,
+                            parse_mode: 'Markdown'
+                        })
+                    });
+                }
+
+                alert(`Дякуємо, ${fname}! Ваше бронювання успішно прийнято. Ми зв'яжемося з вами найближчим часом.`);
+            });
+        });
+    </script>
+</body>
+</html>
