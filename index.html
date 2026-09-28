@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusGo — Сучасні автобусні поїздки</title>
+    <!-- Шрифт Inter з Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Навігація / Шапка -->
+    <header class="navbar">
+        <div class="container navbar-container">
+            <a href="index.html" class="logo">Bus<span>Go</span></a>
+            <nav class="nav-links">
+                <a href="index.html" class="active">Пошук рейсу</a>
+                <a href="#">Мої квитки</a>
+                <a href="#">FAQ</a>
+                <a href="#">Підтримка</a>
+            </nav>
+            <button class="btn-secondary">Увійти</button>
+        </div>
+    </header>
+
+    <!-- Головна секція (Hero) -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Подорожуй розумно.<br><span>Сучасні автобусні рейси.</span></h1>
+
+            <!-- Форма пошуку квитків -->
+            <div class="search-card">
+                <form id="search-form" class="search-form">
+                    <div class="input-group">
+                        <label>Звідки</label>
+                        <input type="text" id="from-input" placeholder="Київ" value="Київ" required>
+                    </div>
+
+                    <button type="button" class="swap-btn" id="swap-btn" title="Поміняти місцями">
+                        ⇄
+                    </button>
+
+                    <div class="input-group">
+                        <label>Куди</label>
+                        <input type="text" id="to-input" placeholder="Львів" value="Львів" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Дата виїзду</label>
+                        <input type="date" id="depart-date" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Назад (Необов'язково)</label>
+                        <input type="date" id="return-date">
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-search">
+                        🔍 Знайти
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Блок з популярними маршрутами -->
+    <section class="routes-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Популярні маршрути</h2>
+                <div class="carousel-nav">
+                    <button class="nav-arrow">←</button>
+                    <button class="nav-arrow">→</button>
+                </div>
+            </div>
+
+            <div class="routes-grid">
+                <!-- Картка 1 -->
+                <div class="route-card">
+                    <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1588880331179-bc9b9338fa5a?auto=format&fit=crop&w=600&q=80');">
+                        <button class="fav-btn">♥</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-header">
+                            <h3>Київ — Одеса</h3>
+                            <span class="price">450 грн</span>
+                        </div>
+                        <p class="card-subtitle">Комфортний рейс • Експрес</p>
+                        <div class="card-footer">
+                            <span class="badge">Виїзд: 08:00</span>
+                            <a href="#" class="arrow-link">→</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Картка 2 -->
+                <div class="route-card">
+                    <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=600&q=80');">
+                        <button class="fav-btn">♥</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-header">
+                            <h3>Київ — Львів</h3>
+                            <span class="price">550 грн</span>
+                        </div>
+                        <p class="card-subtitle">Нічний рейс • Wi-Fi & Розетки</p>
+                        <div class="card-footer">
+                            <span class="badge">Виїзд: 22:30</span>
+                            <a href="#" class="arrow-link">→</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Картка 3 -->
+                <div class="route-card">
+                    <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80');">
+                        <button class="fav-btn">♥</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-header">
+                            <h3>Львів — Краків</h3>
+                            <span class="price">1200 грн</span>
+                        </div>
+                        <p class="card-subtitle">Міжнародний • Без пересадок</p>
+                        <div class="card-footer">
+                            <span class="badge">Виїзд: 06:00</span>
+                            <a href="#" class="arrow-link">→</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Підніжжя (Footer) -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <p>© 2026 BusGo. Всі права захищені.</p>
+            <div class="footer-links">
+                <a href="#">Умови використання</a>
+                <a href="#">Конфіденційність</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
