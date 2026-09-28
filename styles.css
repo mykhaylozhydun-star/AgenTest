@@ -324,3 +324,76 @@ body {
         font-size: 32px;
     }
 }
+/* Додаткові блоки для інформації */
+.section-title {
+    font-size: 32px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #0f172a;
+}
+
+.info-section, .steps-section, .reviews-section {
+    padding: 60px 0;
+}
+
+.features-grid, .steps-grid, .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.feature-card, .step-card, .review-card {
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+.feature-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+}
+
+.feature-card h3, .step-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.feature-card p, .step-card p, .review-text {
+    color: #64748b;
+    font-size: 15px;
+}
+
+.step-number {
+    font-size: 40px;
+    font-weight: 800;
+    color: #10b981;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.reviews-section {
+    background-color: #f1f5f9;
+}
+
+.review-card {
+    border: none;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.review-author {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.review-author strong {
+    color: #0f172a;
+}
+
+.review-author span {
+    font-size: 13px;
+    color: #94a3b8;
+}
