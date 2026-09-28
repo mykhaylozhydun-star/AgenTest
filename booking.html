@@ -203,9 +203,19 @@
             const from = urlParams.get('from') || 'Львів';
             const to = urlParams.get('to') || 'Барселона';
             const ticketPrice = Number(urlParams.get('price')) || 4600;
+            const paramDate = urlParams.get('date');
 
             document.getElementById('route-from-title').textContent = from;
             document.getElementById('route-to-title').textContent = to;
+
+            const dateInput = document.getElementById('booking-date');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
+            if (paramDate) {
+                dateInput.value = paramDate;
+            } else {
+                dateInput.value = today;
+            }
 
             const seatsContainer = document.getElementById('seats-container');
             const seatsDisplay = document.getElementById('selected-seats-display');
@@ -219,7 +229,6 @@
                 seat.className = 'seat';
                 seat.textContent = i;
 
-                // Випадкові вже зайняті місця для реалістичності
                 if ([3, 7, 12, 18, 22].includes(i)) {
                     seat.classList.add('occupied');
                 } else {
@@ -247,9 +256,9 @@
                 }
             }
 
-            // Налаштування Telegram Бота для відправки сповіщень
-            const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN'; // Токен вашого бота
-            const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID';     // Ваш ID чату
+            // Налаштування Telegram Бота
+            const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN'; 
+            const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID';     
 
             document.getElementById('booking-form').addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -266,7 +275,14 @@
                 const date = document.getElementById('booking-date').value;
                 const totalPrice = selectedSeats.length * ticketPrice;
 
-                // Текст повідомлення для вас у Telegram
+                // 1. Збереження бронювання локально в Адмінку
+                const existingBookings = JSON.parse(localStorage.getItem('bus_user_bookings') || '[]');
+                existingBookings.push({
+                    fname, lname, phone, email, date, from, to, seats: selectedSeats, totalPrice
+                });
+                localStorage.setItem('bus_user_bookings', JSON.stringify(existingBookings));
+
+                // 2. Формування повідомлення для Telegram
                 const message = `
 🚌 **НОВЕ БРОНЮВАННЯ КВИТКА!**
 
@@ -279,7 +295,7 @@
 💰 **Сума:** ${totalPrice} грн
                 `;
 
-                // Якщо вказані реальні токени — відправляємо в Telegram
+                // 3. Відправка в Telegram (якщо вказані токени)
                 if (TELEGRAM_BOT_TOKEN !== 'YOUR_BOT_TOKEN') {
                     fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
                         method: 'POST',
