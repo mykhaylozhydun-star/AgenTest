@@ -4,34 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BusGo — Сучасні автобусні поїздки</title>
-    <!-- Шрифт Inter з Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <!-- Навігація / Шапка -->
+    <!-- Навігація -->
     <header class="navbar">
         <div class="container navbar-container">
             <a href="index.html" class="logo">Bus<span>Go</span></a>
             <nav class="nav-links">
-                <a href="index.html" class="active">Пошук рейсу</a>
-                <a href="#">Мої квитки</a>
-                <a href="#">FAQ</a>
-                <a href="#">Підтримка</a>
+                <a href="index.html" class="active">Головна</a>
+                <a href="search.html">Пошук рейсів</a>
+                <a href="faq.html">Часті запитання</a>
+                <a href="contacts.html">Контакти</a>
+                <a href="admin.html" style="color: #10b981; font-weight: 700;">Адмінка ⚙️</a>
             </nav>
             <button class="btn-secondary">Увійти</button>
         </div>
     </header>
 
-    <!-- Головна секція (Hero) -->
+    <!-- Hero Секція -->
     <section class="hero-section">
         <div class="container">
             <h1 class="hero-title">Подорожуй розумно.<br><span>Сучасні автобусні рейси.</span></h1>
 
-            <!-- Форма пошуку квитків -->
+            <!-- Форма пошуку -->
             <div class="search-card">
                 <form id="search-form" class="search-form">
                     <div class="input-group">
@@ -39,9 +39,7 @@
                         <input type="text" id="from-input" placeholder="Київ" value="Київ" required>
                     </div>
 
-                    <button type="button" class="swap-btn" id="swap-btn" title="Поміняти місцями">
-                        ⇄
-                    </button>
+                    <button type="button" class="swap-btn" id="swap-btn" title="Поміняти місцями">⇄</button>
 
                     <div class="input-group">
                         <label>Куди</label>
@@ -58,90 +56,104 @@
                         <input type="date" id="return-date">
                     </div>
 
-                    <button type="submit" class="btn-primary btn-search">
-                        🔍 Знайти
-                    </button>
+                    <button type="submit" class="btn-primary btn-search">🔍 Знайти</button>
                 </form>
             </div>
         </div>
     </section>
 
-    <!-- Блок з популярними маршрутами -->
+    <!-- Секція "Переваги" -->
+    <section class="info-section">
+        <div class="container">
+            <h2 class="section-title">Чому обирають BusGo?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Швидке бронювання</h3>
+                    <p>Квиток за 2 хвилини без черг та паперової тяганини. Все в електронному вигляді у вашому смартфоні.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📶</div>
+                    <h3>Максимальний комфорт</h3>
+                    <p>Безкоштовний High-Speed Wi-Fi, розетки під кожним сидінням, кондиціонер та м'які крісла.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Безпека та надійність</h3>
+                    <p>Сучасний автопарк, досвідчені водії та цілодобова служба підтримки пасажирів.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Популярні маршрути (підтягуються з адмінки!) -->
     <section class="routes-section">
         <div class="container">
             <div class="section-header">
                 <h2>Популярні маршрути</h2>
-                <div class="carousel-nav">
-                    <button class="nav-arrow">←</button>
-                    <button class="nav-arrow">→</button>
+                <a href="search.html" style="color: #10b981; font-weight: 600; text-decoration: none;">Усі рейси →</a>
+            </div>
+            <div class="routes-grid" id="routes-grid">
+                <!-- Картки додаються за допомогою JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Як це працює -->
+    <section class="steps-section">
+        <div class="container">
+            <h2 class="section-title">Як придбати квиток за 3 кроки?</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <span class="step-number">01</span>
+                    <h3>Знайдіть рейс</h3>
+                    <p>Вкажіть міста виїзду та прибуття, виберіть зручну дату та порівняйте ціни.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-number">02</span>
+                    <h3>Оберіть місце</h3>
+                    <p>На зручній інтерактивній схемі автобуса виберіть улюблене місце біля вікна чи проходу.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-number">03</span>
+                    <h3>Отримайте квиток</h3>
+                    <p>Сплатіть зручним способом і отримайте електронний квиток на вашу пошту чи телефон.</p>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="routes-grid">
-                <!-- Картка 1 -->
-                <div class="route-card">
-                    <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1588880331179-bc9b9338fa5a?auto=format&fit=crop&w=600&q=80');">
-                        <button class="fav-btn">♥</button>
-                    </div>
-                    <div class="card-content">
-                        <div class="card-header">
-                            <h3>Київ — Одеса</h3>
-                            <span class="price">450 грн</span>
-                        </div>
-                        <p class="card-subtitle">Комфортний рейс • Експрес</p>
-                        <div class="card-footer">
-                            <span class="badge">Виїзд: 08:00</span>
-                            <a href="#" class="arrow-link">→</a>
-                        </div>
+    <!-- Відгуки -->
+    <section class="reviews-section">
+        <div class="container">
+            <h2 class="section-title">Що кажуть наші пасажири</h2>
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <p class="review-text">«Дуже зручний сайт! Забронювала квиток Київ-Львів за хвилину. В автобусі був чудовий Wi-Fi і працювали розетки.»</p>
+                    <div class="review-author">
+                        <strong>Анна М.</strong>
+                        <span>Постійний клієнт</span>
                     </div>
                 </div>
-
-                <!-- Картка 2 -->
-                <div class="route-card">
-                    <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=600&q=80');">
-                        <button class="fav-btn">♥</button>
-                    </div>
-                    <div class="card-content">
-                        <div class="card-header">
-                            <h3>Київ — Львів</h3>
-                            <span class="price">550 грн</span>
-                        </div>
-                        <p class="card-subtitle">Нічний рейс • Wi-Fi & Розетки</p>
-                        <div class="card-footer">
-                            <span class="badge">Виїзд: 22:30</span>
-                            <a href="#" class="arrow-link">→</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Картка 3 -->
-                <div class="route-card">
-                    <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80');">
-                        <button class="fav-btn">♥</button>
-                    </div>
-                    <div class="card-content">
-                        <div class="card-header">
-                            <h3>Львів — Краків</h3>
-                            <span class="price">1200 грн</span>
-                        </div>
-                        <p class="card-subtitle">Міжнародний • Без пересадок</p>
-                        <div class="card-footer">
-                            <span class="badge">Виїзд: 06:00</span>
-                            <a href="#" class="arrow-link">→</a>
-                        </div>
+                <div class="review-card">
+                    <p class="review-text">«Їздив до Кракова. Автобус виїхав точно за розкладом, водії ввічливі. Рекомендую BusGo!»</p>
+                    <div class="review-author">
+                        <strong>Олександр К.</strong>
+                        <span>Пасажир</span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Підніжжя (Footer) -->
+    <!-- Підніжжя -->
     <footer class="footer">
         <div class="container footer-container">
             <p>© 2026 BusGo. Всі права захищені.</p>
             <div class="footer-links">
-                <a href="#">Умови використання</a>
-                <a href="#">Конфіденційність</a>
+                <a href="faq.html">Часті запитання</a>
+                <a href="contacts.html">Підтримка</a>
+                <a href="admin.html">Адмін-панель</a>
             </div>
         </div>
     </footer>
